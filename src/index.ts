@@ -218,7 +218,13 @@ export async function run() {
         );
       }
       if (outputEnvCredentials) {
-        await exportAccountId(credentialsClient, maskAccountId);
+        await retryAndBackoff(
+          async () => {
+            exportAccountId(credentialsClient, maskAccountId);
+          },
+          !disableRetry,
+          maxRetries,
+        );
       }
     } else {
       core.info('Proceeding with IAM user credentials');
